@@ -8,31 +8,32 @@ public class EmpresaDTO {
     private String nombre;
     private Double facturacionAnual;
     private Integer numeroVendedores;
-    private String pais; // Solo el nombre del país
+    private Long paisId; // Solo el nombre del país
     private List<String> areas; // Lista de nombres de áreas
     private List<String> vendedores; // Lista de nombres de vendedores
     private LocalDate fechaEntrada;
+    private Long sedePaisId;
 
     // Constructor sin argumentos (necesario para Jackson)
     public EmpresaDTO() {
     }
 
     // Constructor con 5 argumentos
-    public EmpresaDTO(Long id, String nombre, Double facturacionAnual, Integer numeroVendedores, String pais) {
+    public EmpresaDTO(Long id, String nombre, Double facturacionAnual, Integer numeroVendedores, Long paisId) {
         this.id = id;
         this.nombre = nombre;
         this.facturacionAnual = facturacionAnual;
         this.numeroVendedores = numeroVendedores;
-        this.pais = pais;
+        this.paisId = paisId;
     }
 
     // Constructor completo con todos los campos
-    public EmpresaDTO(Long id, String nombre, Double facturacionAnual, Integer numeroVendedores, String pais, List<String> areas, List<String> vendedores, LocalDate fechaEntrada) {
+    public EmpresaDTO(Long id, String nombre, Double facturacionAnual, Integer numeroVendedores, Long paisId, List<String> areas, List<String> vendedores, LocalDate fechaEntrada) {
         this.id = id;
         this.nombre = nombre;
         this.facturacionAnual = facturacionAnual;
         this.numeroVendedores = numeroVendedores;
-        this.pais = pais;
+        this.paisId = paisId;
         this.areas = areas;
         this.vendedores = vendedores;
         this.fechaEntrada = fechaEntrada;
@@ -54,6 +55,14 @@ public class EmpresaDTO {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+    
+    public Long getSedePaisId() {
+        return sedePaisId;
+    }
+
+    public void setSedePaisId(Long sedePaisId) {
+        this.sedePaisId = sedePaisId;
+    }
 
     public Double getFacturacionAnual() {
         return facturacionAnual;
@@ -71,12 +80,12 @@ public class EmpresaDTO {
         this.numeroVendedores = numeroVendedores;
     }
 
-    public String getPais() {
-        return pais;
+    public Long getPais() {
+        return paisId;
     }
 
-    public void setPais(String pais) {
-        this.pais = pais;
+    public void setPais(Long paisId) {
+        this.paisId = paisId;
     }
 
     public List<String> getAreas() {

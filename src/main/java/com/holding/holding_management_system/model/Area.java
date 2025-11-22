@@ -11,13 +11,22 @@ public class Area {
     private Long id;
 
     private String nombre;
+
     private String descripcion;
 
-    @ManyToMany(mappedBy = "areas")
+    @ManyToMany(mappedBy = "areas") // Relación bidireccional con Empresa
     private List<Empresa> empresas;
 
-    @ManyToMany(mappedBy = "areasCubiertas")
-    private List<Asesor> asesores;
+    // Constructor vacío (requerido por JPA)
+    public Area() {}
+
+    // Constructor completo
+    public Area(Long id, String nombre, String descripcion, List<Empresa> empresas) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.empresas = empresas;
+    }
 
     // Getters y Setters
     public Long getId() {
@@ -50,13 +59,5 @@ public class Area {
 
     public void setEmpresas(List<Empresa> empresas) {
         this.empresas = empresas;
-    }
-
-    public List<Asesor> getAsesores() {
-        return asesores;
-    }
-
-    public void setAsesores(List<Asesor> asesores) {
-        this.asesores = asesores;
     }
 }
