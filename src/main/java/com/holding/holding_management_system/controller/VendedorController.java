@@ -54,6 +54,12 @@ public class VendedorController {
         return ResponseEntity.ok(vendedorDTO);
     }
 
+    @GetMapping("/empresa/{empresaId}/piramide")
+    public ResponseEntity<List<VendedorDTO>> obtenerPiramidePorEmpresa(@PathVariable Long empresaId) {
+        List<VendedorDTO> piramide = vendedorService.obtenerPiramidePorEmpresa(empresaId);
+        return ResponseEntity.ok(piramide);
+    }
+    
     // Endpoint para crear un vendedor
     @PostMapping
     public ResponseEntity<Vendedor> guardar(@RequestBody VendedorDTO vendedorDTO) {

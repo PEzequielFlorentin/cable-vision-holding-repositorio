@@ -24,6 +24,7 @@ public class VendedorService {
         this.empresaRepository = empresaRepository;
     }
 
+    
     // Método para eliminar un vendedor
     public void eliminarVendedor(Long id) {
         // Verifica si el vendedor existe
@@ -112,6 +113,33 @@ public class VendedorService {
         Vendedor vendedor = vendedorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Vendedor no encontrado con ID: " + id));
         return convertToDTO(vendedor);
+    }
+
+    public List<VendedorDTO> obtenerPiramidePorEmpresa(Long empresaId) {
+        // Obtiene todos los vendedores de la empresa
+        List<Vendedor> vendedores = vendedorRepository.findByEmpresaId(empresaId);
+    
+        // Filtra los vendedores que no tienen captador (nivel raíz de la pirámide)
+        List<Vendedor> raiz = vendedores.stream()
+                .filter(v -> v.getCaptador() == null)
+                .collect(Collectors.toList());
+    
+        // Construye la pirámide recursivamente
+        return raiz.stream()
+                .map(this::convertirVendedorConCaptados)
+                .collect(Collectors.toList());
+    }
+    
+    private VendedorDTO convertirVendedorConCaptados(Vendedor vendedor) {
+        VendedorDTO vendedorDTO = convertToDTO(vendedor);
+    
+        // Convierte los vendedores captados recursivamente
+        List<VendedorDTO> captadosDTO = vendedor.getVendedoresCaptados().stream()
+                .map(this::convertirVendedorConCaptados)
+                .collect(Collectors.toList());
+    
+        vendedorDTO.setCaptados(captadosDTO);
+        return vendedorDTO;
     }
 
     private VendedorDTO convertToDTO(Vendedor vendedor) {

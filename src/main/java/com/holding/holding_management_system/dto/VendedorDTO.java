@@ -1,6 +1,7 @@
 package com.holding.holding_management_system.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class VendedorDTO {
 
@@ -10,6 +11,7 @@ public class VendedorDTO {
     private String direccion;
     private LocalDate fechaCaptacion;
     private Long empresaId; // ID de la empresa asociada
+    private List<VendedorDTO> captados; // Subordinados
 
     // Constructor vacío
     public VendedorDTO() {}
@@ -61,5 +63,12 @@ public class VendedorDTO {
 
     public void setEmpresaId(Long empresaId) {
         this.empresaId = empresaId;
+    }
+    public List<VendedorDTO> getCaptados() {
+        return captados;
+    }
+
+    public void setCaptados(List<VendedorDTO> captados) {
+        this.captados = captados;
     }
 }
