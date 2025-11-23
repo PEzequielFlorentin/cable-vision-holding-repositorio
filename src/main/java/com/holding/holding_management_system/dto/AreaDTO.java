@@ -1,27 +1,19 @@
-package com.holding.holding_management_system.model;
+package com.holding.holding_management_system.dto;
 
-import jakarta.persistence.*;
 import java.util.List;
 
-@Entity
-public class Area {
+public class AreaDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String nombre;
-
     private String descripcion;
+    private List<Long> empresas; // IDs de las empresas asociadas
 
-    @ManyToMany(mappedBy = "areas") // Relación bidireccional con Empresa
-    private List<Empresa> empresas;
-
-    // Constructor vacío (requerido por JPA)
-    public Area() {}
+    // Constructor vacío
+    public AreaDTO() {}
 
     // Constructor completo
-    public Area(Long id, String nombre, String descripcion, List<Empresa> empresas) {
+    public AreaDTO(Long id, String nombre, String descripcion, List<Long> empresas) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -53,11 +45,11 @@ public class Area {
         this.descripcion = descripcion;
     }
 
-    public List<Empresa> getEmpresas() {
+    public List<Long> getEmpresas() {
         return empresas;
     }
 
-    public void setEmpresas(List<Empresa> empresas) {
+    public void setEmpresas(List<Long> empresas) {
         this.empresas = empresas;
     }
 }

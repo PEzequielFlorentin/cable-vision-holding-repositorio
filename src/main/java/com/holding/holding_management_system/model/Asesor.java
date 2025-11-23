@@ -1,10 +1,8 @@
 package com.holding.holding_management_system.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.time.LocalDate;
+import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-
 
 @Entity
 public class Asesor {
@@ -13,8 +11,8 @@ public class Asesor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "El código del asesor no puede estar vacío")
-    private String codigoAsesor;
+    @Column(name = "codigo_asesor", nullable = false)
+    private String codigo;
 
     @NotBlank(message = "El nombre no puede estar vacío")
     private String nombre;
@@ -25,26 +23,24 @@ public class Asesor {
     @NotBlank(message = "La titulación no puede estar vacía")
     private String titulacion;
 
-    // Relación entre Asesor, Área y Empresa
     @ManyToMany
     @JoinTable(
         name = "asesor_area",
         joinColumns = @JoinColumn(name = "asesor_id"),
         inverseJoinColumns = @JoinColumn(name = "area_id")
     )
-    private List<Area> areasCubiertas;
+    private List<Area> areas;
 
-    // Relación entre Asesor, Área y Empresa
     @ManyToMany
     @JoinTable(
         name = "asesor_empresa",
         joinColumns = @JoinColumn(name = "asesor_id"),
         inverseJoinColumns = @JoinColumn(name = "empresa_id")
     )
-    private List<Empresa> empresasAsesoradas;
+    private List<Empresa> empresas;
 
-    @PastOrPresent(message = "La fecha de inicio debe ser en el pasado o el presente")
-    private LocalDate fechaInicio;
+    // Constructor vacío
+    public Asesor() {}
 
     // Getters y Setters
     public Long getId() {
@@ -55,12 +51,12 @@ public class Asesor {
         this.id = id;
     }
 
-    public String getCodigoAsesor() {
-        return codigoAsesor;
+    public String getCodigo() {
+        return codigo;
     }
 
-    public void setCodigoAsesor(String codigoAsesor) {
-        this.codigoAsesor = codigoAsesor;
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getNombre() {
@@ -87,27 +83,19 @@ public class Asesor {
         this.titulacion = titulacion;
     }
 
-    public List<Area> getAreasCubiertas() {
-        return areasCubiertas;
+    public List<Area> getAreas() {
+        return areas;
     }
 
-    public void setAreasCubiertas(List<Area> areasCubiertas) {
-        this.areasCubiertas = areasCubiertas;
+    public void setAreas(List<Area> areas) {
+        this.areas = areas;
     }
 
-    public List<Empresa> getEmpresasAsesoradas() {
-        return empresasAsesoradas;
+    public List<Empresa> getEmpresas() {
+        return empresas;
     }
 
-    public void setEmpresasAsesoradas(List<Empresa> empresasAsesoradas) {
-        this.empresasAsesoradas = empresasAsesoradas;
-    }
-
-    public LocalDate getFechaInicio() {
-        return fechaInicio;
-    }
-
-    public void setFechaInicio(LocalDate fechaInicio) {
-        this.fechaInicio = fechaInicio;
+    public void setEmpresas(List<Empresa> empresas) {
+        this.empresas = empresas;
     }
 }
