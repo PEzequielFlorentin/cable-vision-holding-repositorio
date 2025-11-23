@@ -13,7 +13,24 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Deshabilita CSRF
             .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // Permite acceso a todos los endpoints
+                .anyRequest().permitAll() // Permite acceso a todos los endpoints                .requestMatchers("/h2-console/**", "/frontend/login.html", "/frontend/css/**").permitAll() // Permitir acceso a login.html y recursos estáticos
+                .anyRequest().authenticated() // Requiere autenticación para las demás rutas
+            )
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**") // Deshabilitar CSRF para H2
+            )
+            .headers(headers -> headers
+                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permitir iframes para la consola H2
+            )
+            .formLogin(form -> form
+                .loginPage("/frontend/login.html") // Configura tu página personalizada de login
+                .permitAll() // Permitir acceso a la página de login
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/frontend/login.html")
+                .permitAll()
+
             );
         return http.build();
     }

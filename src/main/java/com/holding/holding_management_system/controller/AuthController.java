@@ -1,24 +1,51 @@
 package com.holding.holding_management_system.controller;
 
-import com.holding.holding_management_system.dto.LoginRequest;
 import com.holding.holding_management_system.service.AuthService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-@RestController
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@Controller
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    @Autowired
+    private AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
-    // Endpoint para el login
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        String token = authService.login(loginRequest);
-        return ResponseEntity.ok(token);
+    public void login(@RequestParam("username") String username,
+                      @RequestParam("password") String password,
+                      HttpServletResponse response) throws IOException {
+        if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
+            response.sendRedirect("/frontend/login.html?error=true");
+            return;
+        }
+
+        String role = authService.validateCredentials(username, password);
+
+        if (role == null) {
+            // Invalid credentials, redirect to login page with error
+            response.sendRedirect("/frontend/login.html?error=true");
+        } else {
+            // Redirect based on role
+            switch (role.toLowerCase()) {
+                case "admin":
+                    response.sendRedirect("/frontend/dashboard-admin.html");
+                    break;
+                case "asesor":
+                    response.sendRedirect("/frontend/dashboard-asesor.html");
+                    break;
+                case "vendedor":
+                    response.sendRedirect("/frontend/dashboard-vendedor.html");
+                    break;
+                default:
+                    response.sendRedirect("/frontend/login.html?error=true");
+            }
+        }
     }
 }
