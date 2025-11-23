@@ -12,18 +12,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/h2-console/**").permitAll() // Permitir acceso a la consola H2
-                .requestMatchers("/api/empresas/**").permitAll() // Permitir acceso público a /api/empresas
+                .requestMatchers("/h2-console/**", "/frontend/login.html", "/frontend/css/**").permitAll() // Permitir acceso a login.html y recursos estáticos
                 .anyRequest().authenticated() // Requiere autenticación para las demás rutas
             )
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**", "/api/empresas/**") // Deshabilitar CSRF para H2 y /api/empresas
+                .ignoringRequestMatchers("/h2-console/**") // Deshabilitar CSRF para H2
             )
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permitir iframes para la consola H2
             )
             .formLogin(form -> form
-                .defaultSuccessUrl("/h2-console", true) // Redirige a la consola H2 después de iniciar sesión
+                .loginPage("/frontend/login.html") // Configura tu página personalizada de login
+                .permitAll() // Permitir acceso a la página de login
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/frontend/login.html")
+                .permitAll()
             );
 
         return http.build();
