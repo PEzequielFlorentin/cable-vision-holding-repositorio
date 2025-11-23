@@ -1,37 +1,64 @@
 package com.holding.holding_management_system;
 
+import com.holding.holding_management_system.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
+
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Deshabilita CSRF
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() // Permite acceso a todos los endpoints                .requestMatchers("/h2-console/**", "/frontend/login.html", "/frontend/css/**").permitAll() // Permitir acceso a login.html y recursos estáticos
-                .anyRequest().authenticated() // Requiere autenticación para las demás rutas
-            )
-            .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/h2-console/**") // Deshabilitar CSRF para H2
-            )
-            .headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions.sameOrigin()) // Permitir iframes para la consola H2
-            )
-            .formLogin(form -> form
-                .loginPage("/frontend/login.html") // Configura tu página personalizada de login
-                .permitAll() // Permitir acceso a la página de login
-            )
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/frontend/login.html")
-                .permitAll()
+                .csrf(csrf -> csrf.disable()) // Deshabilitar CSRF temporalmente para desarrollo
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll() // Recursos
+                                                                                                       // estáticos
+                        .requestMatchers("/auth/login", "/error", "/hash-password", "/generate-hashes").permitAll() // Login
+                                                                                                                    // público
+                                                                                                                    // y
+                                                                                                                    // generadores
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/vendedor/**").hasAnyRole("VENDEDOR", "ADMIN")
+                        .requestMatchers("/asesor/**").hasAnyRole("ASESOR", "ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/auth/login") // URL del formulario de login
+                        .loginProcessingUrl("/auth/login-process") // URL donde se hace el POST
+                        .defaultSuccessUrl("/home", true) // Redirigir a home tras login exitoso
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/auth/login?logout")
+                        .permitAll());
 
-            );
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

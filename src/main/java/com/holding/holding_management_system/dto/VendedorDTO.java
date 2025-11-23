@@ -11,10 +11,12 @@ public class VendedorDTO {
     private String direccion;
     private LocalDate fechaCaptacion;
     private Long empresaId; // ID de la empresa asociada
+    private Long captadorId; // ID del vendedor captador
     private List<VendedorDTO> captados; // Subordinados
 
     // Constructor vacío
-    public VendedorDTO() {}
+    public VendedorDTO() {
+    }
 
     // Getters y Setters
     public Long getId() {
@@ -64,6 +66,15 @@ public class VendedorDTO {
     public void setEmpresaId(Long empresaId) {
         this.empresaId = empresaId;
     }
+
+    public Long getCaptadorId() {
+        return captadorId;
+    }
+
+    public void setCaptadorId(Long captadorId) {
+        this.captadorId = captadorId;
+    }
+
     public List<VendedorDTO> getCaptados() {
         return captados;
     }
